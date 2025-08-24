@@ -1,13 +1,62 @@
-# About Me
+# About Me  
 
-Hi there! I'm Darragh, a computer science student from DCU with a passion for full stack development. I love building things and solving problems, and I'm always looking for new challenges to tackle.
+Hi, I'm **Darragh O'Reilly**, a Computer Science graduate from **Dublin City University** with a strong passion for software development and continuous learning.  
+I thrive on solving complex problems, building scalable solutions, and constantly expanding my skill set through new technologies, projects, and contributions.  
 
-You can find more information about me and my work at [my personal website](https://www.alaric.ie/). You can also connect with me on [LinkedIn](www.linkedin.com/in/darragh-o-5055b1230)!
-<br><br/>
+I’m actively working on personal projects, exploring different programming languages, and refining my development practices to grow as a versatile engineer.  
 
-<a href="https://github.com/anuraghazra/github-readme-stats">
-  <img align="center" src="https://github-readme-stats-ten-gilt.vercel.app/api?username=DarraghOReilly211&count_private=true&show_icons=true" />
-</a>
-<a href="https://git.io/streak-stats">
-  <img align="center" src="https://streak-stats.demolab.com/?user=DarraghOReilly211)" />
-</a>
+🔗 Learn more about me and my work at [my personal website](https://www.alaric.ie/)  
+💼 Connect with me on [LinkedIn](https://www.linkedin.com/in/darragh-o-5055b1230/)  
+
+---
+
+### 📊 GitHub Stats  
+
+<table role="table">
+  <thead>
+    <tr>
+      <th scope="col" align="center">Overall Stats</th>
+      <th scope="col" align="center">Commit Streak</th>
+      <th scope="col" align="center">Top Languages</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">
+        <a href="https://github.com/anuraghazra/github-readme-stats" title="Open GitHub Readme Stats (Overall Stats)">
+          <img
+            src="https://github-readme-stats.vercel.app/api?username=DarraghOReilly211&count_private=true&show_icons=true&theme=highcontrast"
+            alt="Overall GitHub stats for Darragh O'Reilly showing commits, PRs, issues, and stars"
+            width="480" />
+        </a>
+        <br /><span><strong>Overall Stats</strong></span>
+      </td>
+      <td align="center">
+        <a href="https://git.io/streak-stats" title="Open GitHub Streak Stats">
+          <img
+            src="https://streak-stats.demolab.com/?user=DarraghOReilly211&theme=highcontrast"
+            alt="GitHub contribution streak chart for Darragh O'Reilly"
+            width="480" />
+        </a>
+        <br /><span><strong>Commit Streak</strong></span>
+      </td>
+      <td align="center">
+        <a href="https://github.com/anuraghazra/github-readme-stats" title="Open GitHub Readme Stats (Top Languages)">
+          <img
+            src="https://github-readme-stats.vercel.app/api/top-langs/?username=DarraghOReilly211&layout=donut&theme=highcontrast"
+            alt="Top programming languages used by Darragh O'Reilly, displayed as a donut chart"
+            width="480" />
+        </a>
+        <br /><span><strong>Top Languages</strong></span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<details>
+  <summary><strong>Accessible text alternatives</strong></summary>
+
+- Overall contributions and repository activity: visit your public profile activity at <https://github.com/DarraghOReilly211>.  
+- Streak breakdown and contribution calendar: GitHub contribution graph on your profile page.  
+- Language usage details: check the “Languages” section on each repository or the Top Languages card link above.
+</details>
