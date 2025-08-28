@@ -14,18 +14,34 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 ## 🛠️ What I’m working on (auto-updated)
 
 <!--START_SECTION:working_on-->
-**DarraghOReilly211/DarraghOReilly211** — latest commit: 12f16a5 — _Update update-working-on.yml_  
-Pushed: 2025-08-28 17:01:56.000 UTC  
-Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
+Pulling latest activity…
 <!--END_SECTION:working_on-->
 
 ---
 
-## 🎯 Currently
+## 📈 Activity Today & This Week (auto-updated)
 
-- **Currently learning:** Java, Spring Boot, system design  
-- **Interested in:** backend architecture, developer tooling, DX  
-- **Open to collaboration on:** testing tools, small OSS utilities
+<!--START_SECTION:activity_metrics-->
+Calculating public activity…
+<!--END_SECTION:activity_metrics-->
+
+---
+
+## 🎯 Learning & Focus
+
+- **Revising Core Skills:** Java, Python, JavaScript, C, C++, algorithms/data structures, CSS/HTML, binary trees  
+- **Currently Exploring:** Optimization, Spring Boot, cyber-security fundamentals  
+- **Next Areas to Deepen:**
+  - *Git & GitHub Workflows* → branching strategies (trunk-based vs GitFlow), Conventional Commits, semantic versioning, release automation with `semantic-release`, reusable workflows, matrix builds, caching (`actions/cache`), job/step outputs, workflow concurrency, environment protection rules.  
+  - *CI/CD & DevOps* → Docker basics → multi-stage builds → Compose; artifact/version pipelines; dependency scanning; SBOM generation.  
+  - *Testing Discipline* → unit/integration/E2E, property-based testing, contract tests, test fixtures/mocks, coverage as a *signal*, not a goal.  
+  - *Observability* → structured logs, metrics, tracing; OpenTelemetry basics.  
+  - *Systems Design* → queues, rate-limiting, idempotency, backpressure, eventual consistency, CAP trade-offs.  
+  - *Performance* → profiling (CPU/heap), async I/O patterns, caching layers (in-proc, Redis), SQL query plans and indexes.  
+  - *Security Hygiene* → secrets management, least-privilege, SAST/DAST, dependency updates, supply-chain basics.  
+  - *Cloud & Databases* → AWS (IAM, S3, Lambda), Postgres internals (VACUUM, EXPLAIN), transactions & isolation levels.  
+- **Interests:** Backend architecture, developer tooling, DX  
+- **Open to Collaboration On:** Testing tools, small OSS utilities
 
 ---
 
