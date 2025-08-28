@@ -33,7 +33,7 @@ jobs:
             const fs = require('fs');
             const owner = context.repo.owner;
 
-            // Helper: fetch recent public events (up to ~300)
+            // Helper: fetch recent public events (up to ~300) for "pushes this week"
             async function fetchRecentPublicEvents(username, pages = 10) {
               const events = [];
               for (let page = 1; page <= pages; page++) {
@@ -48,7 +48,7 @@ jobs:
               return events;
             }
 
-            // 1) Find most recently pushed public repo (skip forks/archived)
+            // 1) Most recently pushed public repo (skip forks/archived)
             const { data: repos } = await github.rest.repos.listForUser({
               username: owner,
               per_page: 100,
@@ -77,8 +77,7 @@ jobs:
             const firstLine = (latest?.commit?.message || '').split('\n')[0] || 'no commit message';
             const repoLine = `**${recent.full_name}** — latest commit: ${latest?.sha?.slice(0,7) || '???????'} — _${firstLine}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.full_name}`;
 
-            // 3) Activity metrics
-            // 3a) Commits today (UTC) — via GraphQL contributions API (public contributions)
+            // 3) Activity metrics via GraphQL (commit contributions)
             const now = new Date();
             const startTodayUTC = new Date(Date.UTC(
               now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0
@@ -86,39 +85,42 @@ jobs:
             const endTodayUTC = new Date(Date.UTC(
               now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0
             ));
+            const weekAgoUTC = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-            const query = `
-              query($login: String!, $from: DateTime!, $to: DateTime!) {
+            const gql = `
+              query($login: String!, $fromToday: DateTime!, $toToday: DateTime!, $fromWeek: DateTime!, $toWeek: DateTime!) {
                 user(login: $login) {
-                  contributionsCollection(from: $from, to: $to) {
+                  today: contributionsCollection(from: $fromToday, to: $toToday) {
+                    totalCommitContributions
+                  }
+                  week: contributionsCollection(from: $fromWeek, to: $toWeek) {
                     totalCommitContributions
                   }
                 }
               }
             `;
 
-            const res = await github.graphql(query, {
+            const gqlRes = await github.graphql(gql, {
               login: owner,
-              from: startTodayUTC.toISOString(),
-              to: endTodayUTC.toISOString()
+              fromToday: startTodayUTC.toISOString(),
+              toToday: endTodayUTC.toISOString(),
+              fromWeek: weekAgoUTC.toISOString(),
+              toWeek: now.toISOString()
             });
 
-            const commitsToday = res?.user?.contributionsCollection?.totalCommitContributions ?? 0;
+            const commitsToday = gqlRes?.user?.today?.totalCommitContributions ?? 0;
+            const commitsThisWeek = gqlRes?.user?.week?.totalCommitContributions ?? 0;
 
-            // 3b) Pushes this week (UTC) — count PushEvents in last 7 days (public only)
+            // 4) Optional: Pushes this week (public PushEvents only) for comparison
             const events = await fetchRecentPublicEvents(owner, 10);
-            const weekAgoUTC = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
             let pushesThisWeek = 0;
             for (const ev of events) {
               if (ev.type !== 'PushEvent') continue;
               const ts = new Date(ev.created_at);
-              if (ts >= weekAgoUTC) {
-                pushesThisWeek += 1;
-              }
+              if (ts >= weekAgoUTC) pushesThisWeek += 1;
             }
 
-            // 4) Read, replace both sections, and write README
+            // 5) Replace sections in README
             const path = 'README.md';
             const startA = '<!--START_SECTION:working_on-->';
             const endA   = '<!--END_SECTION:working_on-->';
@@ -142,7 +144,8 @@ jobs:
 
             const metricsBlock = [
               `**Commits today (UTC):** ${commitsToday}`,
-              `**Pushes this week (UTC):** ${pushesThisWeek}`
+              `**Commits this week (UTC):** ${commitsThisWeek}`,
+              `**Pushes this week (public events):** ${pushesThisWeek}`
             ].join('\n');
 
             const newMetrics = `${startB}\n${metricsBlock}\n${endB}`;
