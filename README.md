@@ -1,16 +1,33 @@
-# About Me  
+# About Me
 
 Hi, I'm **Darragh O'Reilly**, a Computer Science graduate from **Dublin City University** with a strong passion for software development and continuous learning.  
-I thrive on solving complex problems, building scalable solutions, and constantly expanding my skill set through new technologies, projects, and contributions.  
+I thrive on solving complex problems, building scalable solutions, and constantly expanding my skill set through new technologies, projects, and contributions.
 
 I’m actively working on personal projects, exploring different programming languages, and refining my development practices to grow as a versatile engineer.  
+As a **personal preference for my personal projects**, I don’t use ChatGPT. Instead, I focus on developing my own skills and deepening my understanding of software design and engineering. Because of this, many of my repos include detailed documentation and drawings of my thought process—not just the finished result.
 
 🔗 Learn more about me and my work at [my personal website](https://www.alaric.ie/)  
-💼 Connect with me on [LinkedIn](https://www.linkedin.com/in/darragh-o-5055b1230/)  
+💼 Connect with me on [LinkedIn](https://www.linkedin.com/in/darragh-o-5055b1230/)
 
 ---
 
-### 📊 GitHub Stats  
+## 🛠️ What I’m working on (auto-updated)
+
+<!--START_SECTION:working_on-->
+Pulling latest activity…
+<!--END_SECTION:working_on-->
+
+---
+
+## 🎯 Currently
+
+- **Currently learning:** Java, Spring Boot, system design  
+- **Interested in:** backend architecture, developer tooling, DX  
+- **Open to collaboration on:** testing tools, small OSS utilities
+
+---
+
+### 📊 GitHub Stats
 
 <table role="table">
   <thead>
