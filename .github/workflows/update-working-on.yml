@@ -1,100 +1,158 @@
-# About Me
+name: Update "What I'm working on"
 
-Hi, I'm **Darragh O'Reilly**, a Computer Science graduate from **Dublin City University** with a strong passion for software development and continuous learning.  
-I thrive on solving complex problems, building scalable solutions, and constantly expanding my skill set through new technologies, projects, and contributions.
+on:
+  # Run every 5 minutes
+  schedule:
+    - cron: "*/5 * * * *"
+  # Also run whenever you push to the profile repo
+  push:
+    branches:
+      - main
+      - master
+  # And allow manual runs from the Actions tab
+  workflow_dispatch:
 
-I’m actively working on personal projects, exploring different programming languages, and refining my development practices to grow as a versatile engineer.  
-As a **personal preference for my personal projects**, I don’t use ChatGPT. Instead, I focus on developing my own skills and deepening my understanding of software design and engineering. Because of this, many of my repos include detailed documentation and drawings of my thought process—not just the finished result.
+permissions:
+  contents: write
 
-🔗 Learn more about me and my work at [my personal website](https://www.alaric.ie/)  
-💼 Connect with me on [LinkedIn](https://www.linkedin.com/in/darragh-o-5055b1230/)
+# Avoid overlapping edits
+concurrency:
+  group: update-working-on
+  cancel-in-progress: false
 
----
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-## 🛠️ What I’m working on (auto-updated)
+      - name: Update README with latest activity
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const owner = context.repo.owner;
 
-<!--START_SECTION:working_on-->
-**DarraghOReilly211/DarraghOReilly211** — latest commit: aa57f65 — _Update README.md_  
-Pushed: 2025-08-28 17:11:25.000 UTC  
-Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
-<!--END_SECTION:working_on-->
+            // Helper: fetch recent public events (up to ~300)
+            async function fetchRecentPublicEvents(username, pages = 10) {
+              const events = [];
+              for (let page = 1; page <= pages; page++) {
+                const { data } = await github.rest.activity.listPublicEventsForUser({
+                  username,
+                  per_page: 30,
+                  page
+                });
+                if (!data || data.length === 0) break;
+                events.push(...data);
+              }
+              return events;
+            }
 
----
+            // 1) Find most recently pushed public repo (skip forks/archived)
+            const { data: repos } = await github.rest.repos.listForUser({
+              username: owner,
+              per_page: 100,
+              sort: 'pushed',
+              direction: 'desc'
+            });
+            const recent = repos.find(r => !r.fork && !r.archived);
+            if (!recent) {
+              core.setFailed("Couldn't find a recent active public repository.");
+              return;
+            }
 
-## 📈 Activity Today & This Week (auto-updated)
+            // 2) Latest commit in that repo
+            const { data: commits } = await github.rest.repos.listCommits({
+              owner: recent.owner.login,
+              repo: recent.name,
+              per_page: 1
+            });
+            const latest = commits[0];
 
-<!--START_SECTION:activity_metrics-->
-**Commits today (UTC):** 0  
-**Pushes this week (UTC):** 17
-<!--END_SECTION:activity_metrics-->
+            const pushedAt = new Date(recent.pushed_at)
+              .toISOString()
+              .replace('T',' ')
+              .replace('Z',' UTC');
 
----
+            const firstLine = (latest?.commit?.message || '').split('\n')[0] || 'no commit message';
+            const repoLine = `**${recent.full_name}** — latest commit: ${latest?.sha?.slice(0,7) || '???????'} — _${firstLine}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.full_name}`;
 
-## 🎯 Learning & Focus
+            // 3) Activity metrics
+            // 3a) Commits today (UTC) — via GraphQL contributions API (public contributions)
+            const now = new Date();
+            const startTodayUTC = new Date(Date.UTC(
+              now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0
+            ));
+            const endTodayUTC = new Date(Date.UTC(
+              now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0
+            ));
 
-- **Revising Core Skills:** Java, Python, JavaScript, C, C++, algorithms/data structures, CSS/HTML, binary trees  
-- **Currently Exploring:** Optimization, Spring Boot, cyber-security fundamentals  
-- **Next Areas to Deepen:**
-  - *Git & GitHub Workflows* → branching strategies (trunk-based vs GitFlow), Conventional Commits, semantic versioning, release automation with `semantic-release`, reusable workflows, matrix builds, caching (`actions/cache`), job/step outputs, workflow concurrency, environment protection rules.  
-  - *CI/CD & DevOps* → Docker basics → multi-stage builds → Compose; artifact/version pipelines; dependency scanning; SBOM generation.  
-  - *Testing Discipline* → unit/integration/E2E, property-based testing, contract tests, test fixtures/mocks, coverage as a *signal*, not a goal.  
-  - *Observability* → structured logs, metrics, tracing; OpenTelemetry basics.  
-  - *Systems Design* → queues, rate-limiting, idempotency, backpressure, eventual consistency, CAP trade-offs.  
-  - *Performance* → profiling (CPU/heap), async I/O patterns, caching layers (in-proc, Redis), SQL query plans and indexes.  
-  - *Security Hygiene* → secrets management, least-privilege, SAST/DAST, dependency updates, supply-chain basics.  
-  - *Cloud & Databases* → AWS (IAM, S3, Lambda), Postgres internals (VACUUM, EXPLAIN), transactions & isolation levels.  
-- **Interests:** Backend architecture, developer tooling, DX  
-- **Open to Collaboration On:** Testing tools, small OSS utilities
+            const query = `
+              query($login: String!, $from: DateTime!, $to: DateTime!) {
+                user(login: $login) {
+                  contributionsCollection(from: $from, to: $to) {
+                    totalCommitContributions
+                  }
+                }
+              }
+            `;
 
----
+            const res = await github.graphql(query, {
+              login: owner,
+              from: startTodayUTC.toISOString(),
+              to: endTodayUTC.toISOString()
+            });
 
-### 📊 GitHub Stats
+            const commitsToday = res?.user?.contributionsCollection?.totalCommitContributions ?? 0;
 
-<table role="table">
-  <thead>
-    <tr>
-      <th scope="col" align="center">Overall Stats</th>
-      <th scope="col" align="center">Commit Streak</th>
-      <th scope="col" align="center">Top Languages</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center">
-        <a href="https://github.com/anuraghazra/github-readme-stats" title="Open GitHub Readme Stats (Overall Stats)">
-          <img
-            src="https://github-readme-stats.vercel.app/api?username=DarraghOReilly211&count_private=true&show_icons=true&theme=highcontrast"
-            alt="Overall GitHub stats for Darragh O'Reilly showing commits, PRs, issues, and stars"
-            width="480" />
-        </a>
-        <br /><span><strong>Overall Stats</strong></span>
-      </td>
-      <td align="center">
-        <a href="https://git.io/streak-stats" title="Open GitHub Streak Stats">
-          <img
-            src="https://streak-stats.demolab.com?user=DarraghOReilly211&theme=highcontrast&cache_seconds=21600"
-            alt="GitHub contribution streak chart for Darragh O'Reilly"
-            width="480" />
-        </a>
-        <br /><span><strong>Commit Streak</strong></span>
-      </td>
-      <td align="center">
-        <a href="https://github.com/anuraghazra/github-readme-stats" title="Open GitHub Readme Stats (Top Languages)">
-          <img
-            src="https://github-readme-stats.vercel.app/api/top-langs/?username=DarraghOReilly211&layout=donut&theme=highcontrast"
-            alt="Top programming languages used by Darragh O'Reilly, displayed as a donut chart"
-            width="480" />
-        </a>
-        <br /><span><strong>Top Languages</strong></span>
-      </td>
-    </tr>
-  </tbody>
-</table>
+            // 3b) Pushes this week (UTC) — count PushEvents in last 7 days (public only)
+            const events = await fetchRecentPublicEvents(owner, 10);
+            const weekAgoUTC = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-<details>
-  <summary><strong>Accessible text alternatives</strong></summary>
+            let pushesThisWeek = 0;
+            for (const ev of events) {
+              if (ev.type !== 'PushEvent') continue;
+              const ts = new Date(ev.created_at);
+              if (ts >= weekAgoUTC) {
+                pushesThisWeek += 1;
+              }
+            }
 
-- Overall contributions and repository activity: visit your public profile activity at <https://github.com/DarraghOReilly211>.  
-- Streak breakdown and contribution calendar: GitHub contribution graph on your profile page.  
-- Language usage details: check the “Languages” section on each repository or the Top Languages card link above.
-</details>
+            // 4) Read, replace both sections, and write README
+            const path = 'README.md';
+            const startA = '<!--START_SECTION:working_on-->';
+            const endA   = '<!--END_SECTION:working_on-->';
+            const startB = '<!--START_SECTION:activity_metrics-->';
+            const endB   = '<!--END_SECTION:activity_metrics-->';
+
+            let readme = fs.readFileSync(path, 'utf8');
+
+            if (!readme.includes(startA) || !readme.includes(endA)) {
+              core.setFailed('README markers for working_on not found.');
+              return;
+            }
+            if (!readme.includes(startB) || !readme.includes(endB)) {
+              core.setFailed('README markers for activity_metrics not found.');
+              return;
+            }
+
+            const newWorkingOn = `${startA}\n${repoLine}\n${endA}`;
+            const regexA = new RegExp(`${startA}[\\s\\S]*?${endA}`);
+            readme = readme.replace(regexA, newWorkingOn);
+
+            const metricsBlock = [
+              `**Commits today (UTC):** ${commitsToday}`,
+              `**Pushes this week (UTC):** ${pushesThisWeek}`
+            ].join('\n');
+
+            const newMetrics = `${startB}\n${metricsBlock}\n${endB}`;
+            const regexB = new RegExp(`${startB}[\\s\\S]*?${endB}`);
+            readme = readme.replace(regexB, newMetrics);
+
+            fs.writeFileSync(path, readme);
+            core.info('README updated.');
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update README with latest project activity"
