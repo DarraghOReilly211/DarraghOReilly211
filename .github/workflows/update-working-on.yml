@@ -120,12 +120,26 @@ jobs:
               if (ts >= weekAgoUTC) pushesThisWeek += 1;
             }
 
-            // 5) Replace sections in README
+            // 5) Build a "Featured Project" block from the most recent repo
+            const desc = (recent.description && recent.description.trim().length > 0)
+              ? recent.description.trim()
+              : 'No description yet.';
+            // Escape backticks to avoid breaking Markdown
+            const safeDesc = desc.replace(/`/g, '\\`');
+            const spotlight = [
+              `**${recent.name}**`,
+              `${safeDesc}`,
+              `🔗 Repo: https://github.com/${recent.full_name}`
+            ].join('  \n');
+
+            // 6) Replace sections in README
             const path = 'README.md';
             const startA = '<!--START_SECTION:working_on-->';
             const endA   = '<!--END_SECTION:working_on-->';
             const startB = '<!--START_SECTION:activity_metrics-->';
             const endB   = '<!--END_SECTION:activity_metrics-->';
+            const startC = '<!--START_SECTION:project_spotlight-->';
+            const endC   = '<!--END_SECTION:project_spotlight-->';
 
             let readme = fs.readFileSync(path, 'utf8');
 
@@ -138,19 +152,29 @@ jobs:
               return;
             }
 
+            // Update "What I'm working on"
             const newWorkingOn = `${startA}\n${repoLine}\n${endA}`;
             const regexA = new RegExp(`${startA}[\\s\\S]*?${endA}`);
             readme = readme.replace(regexA, newWorkingOn);
 
+            // Update Activity metrics
             const metricsBlock = [
-              `**Commits today (UTC):** ${commitsToday}`,
-              `**Commits this week (UTC):** ${commitsThisWeek}`,
-              `**Pushes this week (public events):** ${pushesThisWeek}`
+              `- **Commits today (UTC):** ${commitsToday}`,
+              `- **Commits this week (UTC):** ${commitsThisWeek}`,
+              `- **Pushes this week (public events):** ${pushesThisWeek}`
             ].join('\n');
-
             const newMetrics = `${startB}\n${metricsBlock}\n${endB}`;
             const regexB = new RegExp(`${startB}[\\s\\S]*?${endB}`);
             readme = readme.replace(regexB, newMetrics);
+
+            // Update Featured Project if markers exist (skip silently if not)
+            if (readme.includes(startC) && readme.includes(endC)) {
+              const newSpotlight = `${startC}\n${spotlight}\n${endC}`;
+              const regexC = new RegExp(`${startC}[\\s\\S]*?${endC}`);
+              readme = readme.replace(regexC, newSpotlight);
+            } else {
+              core.info('Project spotlight markers not found; skipping spotlight update.');
+            }
 
             fs.writeFileSync(path, readme);
             core.info('README updated.');
