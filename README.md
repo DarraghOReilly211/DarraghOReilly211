@@ -14,7 +14,9 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 ## 🛠️ What I’m working on (auto-updated)
 
 <!--START_SECTION:working_on-->
-Pulling latest activity…
+**DarraghOReilly211/DarraghOReilly211** — latest commit: aa57f65 — _Update README.md_  
+Pushed: 2025-08-28 17:11:25.000 UTC  
+Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 <!--END_SECTION:working_on-->
 
 ---
@@ -22,7 +24,8 @@ Pulling latest activity…
 ## 📈 Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-Calculating public activity…
+**Commits today (UTC):** 0
+**Pushes this week (UTC):** 17
 <!--END_SECTION:activity_metrics-->
 
 ---
