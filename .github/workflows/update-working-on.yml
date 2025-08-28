@@ -1,0 +1,61 @@
+name: Update “What I’m working on”
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # hourly (UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update README with latest push
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // 1) Find your most recently pushed repo (exclude forks/archived)
+            const { data: repos } = await github.rest.repos.listForAuthenticatedUser({
+              per_page: 100,
+              sort: 'pushed',
+              direction: 'desc'
+            });
+            const recent = repos.find(r => !r.fork && !r.archived);
+            if (!recent) {
+              core.setFailed('No suitable repositories found.');
+            }
+
+            // 2) Get its most recent commit
+            const { data: commits } = await github.rest.repos.listCommits({
+              owner: recent.owner.login,
+              repo: recent.name,
+              per_page: 1
+            });
+            const latest = commits[0];
+
+            // 3) Build markdown line
+            const pushedAt = new Date(recent.pushed_at).toISOString().replace('T',' ').replace('Z',' UTC');
+            const line = `**${recent.full_name}** — latest commit: ${latest.sha.slice(0,7)} — _${latest.commit.message.split('\\n')[0]}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.full_name}`;
+
+            // 4) Replace the section in README
+            const path = 'README.md';
+            const start = '<!--START_SECTION:working_on-->';
+            const end = '<!--END_SECTION:working_on-->';
+            let readme = fs.readFileSync(path, 'utf8');
+
+            const section = `${start}\n${line}\n${end}`;
+            const regex = new RegExp(`${start}[\\s\\S]*?${end}`);
+            readme = readme.replace(regex, section);
+
+            fs.writeFileSync(path, readme);
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(readme): update working on section"
