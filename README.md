@@ -14,8 +14,8 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 ## 🛠️ What I’m working on (auto-updated)
 
 <!--START_SECTION:working_on-->
-**DarraghOReilly211/DarraghOReilly211** — latest commit: dff7c73 — _Update update-working-on.yml_  
-Pushed: 2025-08-28 17:29:37.000 UTC  
+**DarraghOReilly211/DarraghOReilly211** — latest commit: aa57f65 — _Update README.md_  
+Pushed: 2025-08-28 17:11:25.000 UTC  
 Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 <!--END_SECTION:working_on-->
 
@@ -24,7 +24,7 @@ Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 ## 📈 Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-**Commits today (UTC):** 13
+**Commits today (UTC):** 0  
 **Pushes this week (UTC):** 17
 <!--END_SECTION:activity_metrics-->
 
@@ -72,7 +72,7 @@ Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
       <td align="center">
         <a href="https://git.io/streak-stats" title="Open GitHub Streak Stats">
           <img
-            src="https://streak-stats.demolab.com/?user=DarraghOReilly211&theme=highcontrast"
+            src="https://streak-stats.demolab.com?user=DarraghOReilly211&theme=highcontrast&cache_seconds=21600"
             alt="GitHub contribution streak chart for Darragh O'Reilly"
             width="480" />
         </a>
