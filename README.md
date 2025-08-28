@@ -4,6 +4,7 @@ Hi, I'm **Darragh O'Reilly**, a Computer Science graduate from **Dublin City Uni
 I thrive on solving complex problems, building scalable solutions, and constantly expanding my skill set through new technologies, projects, and contributions.
 
 I’m actively working on personal projects, exploring different programming languages, and refining my development practices to grow as a versatile engineer.  
+
 As a **personal preference for my personal projects**, I don’t use ChatGPT. Instead, I focus on developing my own skills and deepening my understanding of software design and engineering. Because of this, many of my repos include detailed documentation and drawings of my thought process—not just the finished result.
 
 🔗 Learn more about me at [my personal website](https://www.alaric.ie/)  
