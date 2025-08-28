@@ -6,7 +6,7 @@ I thrive on solving complex problems, building scalable solutions, and constantl
 I’m actively working on personal projects, exploring different programming languages, and refining my development practices to grow as a versatile engineer.  
 As a **personal preference for my personal projects**, I don’t use ChatGPT. Instead, I focus on developing my own skills and deepening my understanding of software design and engineering. Because of this, many of my repos include detailed documentation and drawings of my thought process—not just the finished result.
 
-🔗 Learn more about me and my work at [my personal website](https://www.alaric.ie/)  
+🔗 Learn more about me at [my personal website](https://www.alaric.ie/)  
 💼 Connect with me on [LinkedIn](https://www.linkedin.com/in/darragh-o-5055b1230/)
 
 ---
@@ -21,12 +21,20 @@ Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 
 ---
 
+## 📂 Featured Project (auto-updated)
+
+<!--START_SECTION:project_spotlight-->
+_The latest project you’ve pushed to will appear here, with its name, description, and repo link._
+<!--END_SECTION:project_spotlight-->
+
+---
+
 ## 📈 Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-**Commits today (UTC):** 20
-**Commits this week (UTC):** 49
-**Pushes this week (public events):** 17
+- **Commits today (UTC):** 20  
+- **Commits this week (UTC):** 49  
+- **Pushes this week (public events):** 17
 <!--END_SECTION:activity_metrics-->
 
 ---
@@ -36,58 +44,48 @@ Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 - **Revising Core Skills:** Java, Python, JavaScript, C, C++, algorithms/data structures, CSS/HTML, binary trees  
 - **Currently Exploring:** Optimization, Spring Boot, cyber-security fundamentals  
 - **Next Areas to Deepen:**
-  - *Git & GitHub Workflows* → branching strategies (trunk-based vs GitFlow), Conventional Commits, semantic versioning, release automation with `semantic-release`, reusable workflows, matrix builds, caching (`actions/cache`), job/step outputs, workflow concurrency, environment protection rules.  
-  - *CI/CD & DevOps* → Docker basics → multi-stage builds → Compose; artifact/version pipelines; dependency scanning; SBOM generation.  
-  - *Testing Discipline* → unit/integration/E2E, property-based testing, contract tests, test fixtures/mocks, coverage as a *signal*, not a goal.  
-  - *Observability* → structured logs, metrics, tracing; OpenTelemetry basics.  
-  - *Systems Design* → queues, rate-limiting, idempotency, backpressure, eventual consistency, CAP trade-offs.  
-  - *Performance* → profiling (CPU/heap), async I/O patterns, caching layers (in-proc, Redis), SQL query plans and indexes.  
-  - *Security Hygiene* → secrets management, least-privilege, SAST/DAST, dependency updates, supply-chain basics.  
-  - *Cloud & Databases* → AWS (IAM, S3, Lambda), Postgres internals (VACUUM, EXPLAIN), transactions & isolation levels.  
+  - *Git & GitHub Workflows* → branching strategies, Conventional Commits, semantic versioning, release automation, reusable workflows, caching, concurrency, environment protection rules  
+  - *CI/CD & DevOps* → Docker, multi-stage builds, Compose, artifact/version pipelines, dependency scanning, SBOM generation  
+  - *Testing Discipline* → unit/integration/E2E, property-based testing, contract tests, coverage as a *signal*, not a goal  
+  - *Observability* → logs, metrics, tracing, OpenTelemetry basics  
+  - *Systems Design* → queues, rate-limiting, idempotency, backpressure, CAP trade-offs  
+  - *Performance* → profiling, async I/O, caching layers, query plans & indexes  
+  - *Security Hygiene* → secrets management, least-privilege, dependency updates, supply-chain basics  
+  - *Cloud & Databases* → AWS (IAM, S3, Lambda), Postgres internals, transactions & isolation levels  
 - **Interests:** Backend architecture, developer tooling, DX  
-- **Open to Collaboration On:** Testing tools, small OSS utilities
+- **Open to Collaboration On:** Testing tools, small OSS utilities  
 
 ---
 
 ### 📊 GitHub Stats
 
-<table role="table">
+<table>
   <thead>
     <tr>
-      <th scope="col" align="center">Overall Stats</th>
-      <th scope="col" align="center">Commit Streak</th>
-      <th scope="col" align="center">Top Languages</th>
+      <th align="center">Overall Stats</th>
+      <th align="center">Commit Streak</th>
+      <th align="center">Top Languages</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td align="center">
-        <a href="https://github.com/anuraghazra/github-readme-stats" title="Open GitHub Readme Stats (Overall Stats)">
-          <img
-            src="https://github-readme-stats.vercel.app/api?username=DarraghOReilly211&count_private=true&show_icons=true&theme=highcontrast"
-            alt="Overall GitHub stats for Darragh O'Reilly showing commits, PRs, issues, and stars"
-            width="480" />
-        </a>
-        <br /><span><strong>Overall Stats</strong></span>
+        <img
+          src="https://github-readme-stats.vercel.app/api?username=DarraghOReilly211&count_private=true&show_icons=true&theme=highcontrast"
+          alt="Overall GitHub stats for Darragh O'Reilly"
+          width="480" />
       </td>
       <td align="center">
-        <a href="https://git.io/streak-stats" title="Open GitHub Streak Stats">
-          <img
-            src="https://streak-stats.demolab.com?user=DarraghOReilly211&theme=highcontrast&cache_seconds=21600"
-            alt="GitHub contribution streak chart for Darragh O'Reilly"
-            width="480"
-          />
-        </a>
-        <br /><span><strong>Commit Streak</strong></span>
+        <img
+          src="https://streak-stats.demolab.com?user=DarraghOReilly211&theme=highcontrast&cache_seconds=21600"
+          alt="GitHub contribution streak chart for Darragh O'Reilly"
+          width="480" />
       </td>
       <td align="center">
-        <a href="https://github.com/anuraghazra/github-readme-stats" title="Open GitHub Readme Stats (Top Languages)">
-          <img
-            src="https://github-readme-stats.vercel.app/api/top-langs/?username=DarraghOReilly211&layout=donut&theme=highcontrast"
-            alt="Top programming languages used by Darragh O'Reilly, displayed as a donut chart"
-            width="480" />
-        </a>
-        <br /><span><strong>Top Languages</strong></span>
+        <img
+          src="https://github-readme-stats.vercel.app/api/top-langs/?username=DarraghOReilly211&layout=donut&theme=highcontrast"
+          alt="Top programming languages used by Darragh O'Reilly"
+          width="480" />
       </td>
     </tr>
   </tbody>
