@@ -21,7 +21,7 @@ Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 
 ---
 
-## 📂 Featured Project (auto-updated)
+## 📂 Project of the hour (auto-updated)
 
 <!--START_SECTION:project_spotlight-->
 **DarraghOReilly211**  
