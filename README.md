@@ -16,8 +16,8 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/DarraghOReilly211** — latest commit: a324181 — _Update README.md_  
-Pushed: 2025-08-28 22:19:33.000 UTC  
+**DarraghOReilly211/DarraghOReilly211** — latest commit: 383c984 — _Update README with latest project activity_  
+Pushed: 2025-08-28 22:19:42.000 UTC  
 Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 <!--END_SECTION:working_on-->
 
@@ -25,7 +25,7 @@ Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 
 ><!--START_SECTION:project_spotlight-->
 **DarraghOReilly211**  
-Hi there 👋, I’m Darragh O’Reilly — a Computer Science graduate from Dublin City University with a passion for software development and continuous learning. I focus on building scalable, well-documented solutions and exploring new technologies through hands-on projects. On GitHub you’ll find my current projects, commit activity,and learning roadmap  
+Hi there , I’m Darragh O’Reilly — a Computer Science graduate from Dublin City University with a passion for software development and continuous learning. I focus on building scalable, well-documented solutions and exploring new technologies through hands-on projects. On GitHub you’ll find my current projects, commit activity, and learning roadmap  
 🔗 Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 <!--END_SECTION:project_spotlight-->
 
@@ -34,8 +34,8 @@ Hi there 👋, I’m Darragh O’Reilly — a Computer Science graduate from Dub
 ## Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-- **Commits today (UTC):** 56
-- **Commits this week (UTC):** 85
+- **Commits today (UTC):** 57
+- **Commits this week (UTC):** 86
 - **Pushes this week (public events):** 31
 <!--END_SECTION:activity_metrics-->
 
