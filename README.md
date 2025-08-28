@@ -16,17 +16,17 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-** — latest commit: 2a607b1 — _Set up board object initialisation. Set up beginnings of piece object initialisation, notes left in file for next steps_  
-Pushed: 2025-08-28 23:28:31.000 UTC  
-Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
+**DarraghOReilly211/DarraghOReilly211** — latest commit: a3c3167 — _Update README with latest project activity_  
+Pushed: 2025-08-28 23:29:22.000 UTC  
+Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 <!--END_SECTION:working_on-->
 
 ### Project of the hour
 
 ><!--START_SECTION:project_spotlight-->
-**Castled-Java_Chess_AI_Online_Play-**  
-A web-based chess platform with a Java engine that plays at configurable strengths. Phase 1 focuses on a robust single-player experience vs. the AI. Phase 2 adds real-time multiplayer (play and spectate) using WebSockets.  
-🔗 Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
+**DarraghOReilly211**  
+Hi there , I’m Darragh O’Reilly — a Computer Science graduate from Dublin City University with a passion for software development and continuous learning. I focus on building scalable, well-documented solutions and exploring new technologies through hands-on projects. On GitHub you’ll find my current projects, commit activity, and learning roadmap  
+🔗 Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 <!--END_SECTION:project_spotlight-->
 
 ---
@@ -34,8 +34,8 @@ A web-based chess platform with a Java engine that plays at configurable strengt
 ## Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-- **Commits today (UTC):** 62
-- **Commits this week (UTC):** 90
+- **Commits today (UTC):** 63
+- **Commits this week (UTC):** 91
 - **Pushes this week (public events):** 31
 <!--END_SECTION:activity_metrics-->
 
