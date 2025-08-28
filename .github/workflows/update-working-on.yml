@@ -1,21 +1,21 @@
 name: Update "What I'm working on"
 
 on:
-  # Run this workflow every 5 minutes
+  # Run every 5 minutes
   schedule:
     - cron: "*/5 * * * *"
-  # Also run it any time you push to your profile repo
+  # Also run whenever you push to the profile repo
   push:
     branches:
       - main
       - master
-  # And let you trigger it manually from the Actions tab
+  # And allow manual runs from the Actions tab
   workflow_dispatch:
 
 permissions:
   contents: write
 
-# Make sure only one update job runs at a time (avoids overlapping edits)
+# Avoid overlapping edits
 concurrency:
   group: update-working-on
   cancel-in-progress: false
@@ -26,33 +26,42 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Update README with latest push
+      - name: Update README with latest activity
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-
-            // Figure out your username (owner of this profile repo)
             const owner = context.repo.owner;
 
-            // Get your public repos, sorted by most recently pushed.
-            // This uses listForUser instead of listForAuthenticatedUser,
-            // which works with the default repo-scoped GITHUB_TOKEN.
+            // Helper: fetch recent public events (up to ~300)
+            async function fetchRecentPublicEvents(username, pages = 10) {
+              const events = [];
+              for (let page = 1; page <= pages; page++) {
+                const { data } = await github.rest.activity.listPublicEventsForUser({
+                  username,
+                  per_page: 30,
+                  page
+                });
+                if (!data || data.length === 0) break;
+                events.push(...data);
+              }
+              return events;
+            }
+
+            // 1) Find most recently pushed public repo (skip forks/archived)
             const { data: repos } = await github.rest.repos.listForUser({
               username: owner,
               per_page: 100,
               sort: 'pushed',
               direction: 'desc'
             });
-
-            // Pick the most recently pushed, skipping forks/archived.
             const recent = repos.find(r => !r.fork && !r.archived);
             if (!recent) {
-              core.setFailed('Couldn’t find a recent active repository.');
+              core.setFailed("Couldn't find a recent active public repository.");
               return;
             }
 
-            // Grab the latest commit from that repo so we can show it off.
+            // 2) Latest commit in that repo
             const { data: commits } = await github.rest.repos.listCommits({
               owner: recent.owner.login,
               repo: recent.name,
@@ -60,37 +69,71 @@ jobs:
             });
             const latest = commits[0];
 
-            // Build a short, friendly line of text with the repo name, commit hash,
-            // first line of the commit message, and the push timestamp (UTC).
             const pushedAt = new Date(recent.pushed_at)
               .toISOString()
               .replace('T',' ')
               .replace('Z',' UTC');
 
             const firstLine = (latest?.commit?.message || '').split('\n')[0] || 'no commit message';
-            const line = `**${recent.full_name}** — latest commit: ${latest.sha.slice(0,7)} — _${firstLine}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.full_name}`;
+            const repoLine = `**${recent.full_name}** — latest commit: ${latest?.sha?.slice(0,7) || '???????'} — _${firstLine}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.full_name}`;
 
-            // Drop that line into your README between the START/END markers.
+            // 3) Activity metrics (public only)
+            const events = await fetchRecentPublicEvents(owner, 10);
+            const now = new Date();
+
+            const startTodayUTC = new Date(Date.UTC(
+              now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0
+            ));
+            const endTodayUTC = new Date(startTodayUTC); endTodayUTC.setUTCDate(endTodayUTC.getUTCDate() + 1);
+            const weekAgoUTC = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+            let commitsToday = 0;
+            let pushesThisWeek = 0;
+
+            for (const ev of events) {
+              if (ev.type !== 'PushEvent') continue;
+              const ts = new Date(ev.created_at);
+              if (ts >= startTodayUTC && ts < endTodayUTC) {
+                commitsToday += (ev.payload?.commits?.length || 0);
+              }
+              if (ts >= weekAgoUTC) {
+                pushesThisWeek += 1;
+              }
+            }
+
+            // 4) Read, replace both sections, and write README
             const path = 'README.md';
-            const start = '<!--START_SECTION:working_on-->';
-            const end = '<!--END_SECTION:working_on-->';
+            const startA = '<!--START_SECTION:working_on-->';
+            const endA   = '<!--END_SECTION:working_on-->';
+            const startB = '<!--START_SECTION:activity_metrics-->';
+            const endB   = '<!--END_SECTION:activity_metrics-->';
+
             let readme = fs.readFileSync(path, 'utf8');
 
-            if (!readme.includes(start) || !readme.includes(end)) {
-              core.setFailed('README markers not found. Make sure START/END markers are present.');
+            if (!readme.includes(startA) || !readme.includes(endA)) {
+              core.setFailed('README markers for working_on not found.');
+              return;
+            }
+            if (!readme.includes(startB) || !readme.includes(endB)) {
+              core.setFailed('README markers for activity_metrics not found.');
               return;
             }
 
-            const newSection = `${start}\n${line}\n${end}`;
-            const regex = new RegExp(`${start}[\\s\\S]*?${end}`);
-            const updated = readme.replace(regex, newSection);
+            const newWorkingOn = `${startA}\n${repoLine}\n${endA}`;
+            const regexA = new RegExp(`${startA}[\\s\\S]*?${endA}`);
+            readme = readme.replace(regexA, newWorkingOn);
 
-            if (updated !== readme) {
-              fs.writeFileSync(path, updated);
-              core.info('README updated.');
-            } else {
-              core.info('README content unchanged; nothing to write.');
-            }
+            const metricsBlock = [
+              `**Commits today (UTC):** ${commitsToday}`,
+              `**Pushes this week (UTC):** ${pushesThisWeek}`
+            ].join('\n');
+
+            const newMetrics = `${startB}\n${metricsBlock}\n${endB}`;
+            const regexB = new RegExp(`${startB}[\\s\\S]*?${endB}`);
+            readme = readme.replace(regexB, newMetrics);
+
+            fs.writeFileSync(path, readme);
+            core.info('README updated.');
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
