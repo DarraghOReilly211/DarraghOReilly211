@@ -24,7 +24,7 @@ Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 ## 📈 Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-**Commits today (UTC):** 15
+**Commits today (UTC):** 15  
 **Pushes this week (UTC):** 17
 <!--END_SECTION:activity_metrics-->
 
@@ -74,7 +74,8 @@ Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
           <img
             src="https://streak-stats.demolab.com?user=DarraghOReilly211&theme=highcontrast&cache_seconds=21600"
             alt="GitHub contribution streak chart for Darragh O'Reilly"
-            width="480" />
+            width="480"
+          />
         </a>
         <br /><span><strong>Commit Streak</strong></span>
       </td>
