@@ -32,16 +32,24 @@ jobs:
           script: |
             const fs = require('fs');
 
-            // Look up all of your repos, sorted by most recently pushed.
-            // Skip forks and archived projects – we only care about active work.
-            const { data: repos } = await github.rest.repos.listForAuthenticatedUser({
+            // Figure out your username (owner of this profile repo)
+            const owner = context.repo.owner;
+
+            // Get your public repos, sorted by most recently pushed.
+            // This uses listForUser instead of listForAuthenticatedUser,
+            // which works with the default repo-scoped GITHUB_TOKEN.
+            const { data: repos } = await github.rest.repos.listForUser({
+              username: owner,
               per_page: 100,
               sort: 'pushed',
               direction: 'desc'
             });
+
+            // Pick the most recently pushed, skipping forks/archived.
             const recent = repos.find(r => !r.fork && !r.archived);
             if (!recent) {
               core.setFailed('Couldn’t find a recent active repository.');
+              return;
             }
 
             // Grab the latest commit from that repo so we can show it off.
@@ -53,9 +61,14 @@ jobs:
             const latest = commits[0];
 
             // Build a short, friendly line of text with the repo name, commit hash,
-            // first line of the commit message, and the push timestamp.
-            const pushedAt = new Date(recent.pushed_at).toISOString().replace('T',' ').replace('Z',' UTC');
-            const line = `**${recent.full_name}** — latest commit: ${latest.sha.slice(0,7)} — _${latest.commit.message.split('\\n')[0]}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.full_name}`;
+            // first line of the commit message, and the push timestamp (UTC).
+            const pushedAt = new Date(recent.pushed_at)
+              .toISOString()
+              .replace('T',' ')
+              .replace('Z',' UTC');
+
+            const firstLine = (latest?.commit?.message || '').split('\n')[0] || 'no commit message';
+            const line = `**${recent.full_name}** — latest commit: ${latest.sha.slice(0,7)} — _${firstLine}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.full_name}`;
 
             // Drop that line into your README between the START/END markers.
             const path = 'README.md';
@@ -63,13 +76,23 @@ jobs:
             const end = '<!--END_SECTION:working_on-->';
             let readme = fs.readFileSync(path, 'utf8');
 
-            const section = `${start}\n${line}\n${end}`;
-            const regex = new RegExp(`${start}[\\s\\S]*?${end}`);
-            readme = readme.replace(regex, section);
+            if (!readme.includes(start) || !readme.includes(end)) {
+              core.setFailed('README markers not found. Make sure START/END markers are present.');
+              return;
+            }
 
-            fs.writeFileSync(path, readme);
+            const newSection = `${start}\n${line}\n${end}`;
+            const regex = new RegExp(`${start}[\\s\\S]*?${end}`);
+            const updated = readme.replace(regex, newSection);
+
+            if (updated !== readme) {
+              fs.writeFileSync(path, updated);
+              core.info('README updated.');
+            } else {
+              core.info('README content unchanged; nothing to write.');
+            }
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore(readme): update working on section"
+          commit_message: "Update README with latest project activity"
