@@ -12,16 +12,16 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ---
 
-## 🛠️ What I've been working on (auto-updated)
+## What I've been working on (auto-updated)
 
-### 🔄 My latest commit 🔄
+### My latest commit
 ><!--START_SECTION:working_on-->
 **DarraghOReilly211/DarraghOReilly211** — latest commit: e4a3f9e — _Update README with latest project activity_  
 Pushed: 2025-08-28 21:50:53.000 UTC  
 Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 <!--END_SECTION:working_on-->
 
-### 📌 Project of the hour 📌
+### Project of the hour
 
 ><!--START_SECTION:project_spotlight-->
 **DarraghOReilly211**  
@@ -31,7 +31,7 @@ Hi there 👋, I’m Darragh O’Reilly — a Computer Science graduate from Dub
 
 ---
 
-## 📈 Activity Today & This Week (auto-updated)
+## Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
 - **Commits today (UTC):** 54
@@ -41,10 +41,10 @@ Hi there 👋, I’m Darragh O’Reilly — a Computer Science graduate from Dub
 
 ---
 
-## 🎯 Learning & Focus
+## Learning & Focus
 
 - **Revising Core Skills:** Java, Python, JavaScript, C, C++, algorithms/data structures, CSS/HTML, binary trees  
-- **Currently Exploring:** Optimization, Spring Boot, cyber-security fundamentals  
+- **Currently Exploring:** Optimisation, Spring Boot, cyber-security fundamentals  
 - **Next Areas to Deepen:**
   - *Git & GitHub Workflows* → branching strategies, Conventional Commits, semantic versioning, release automation, reusable workflows, caching, concurrency, environment protection rules  
   - *CI/CD & DevOps* → Docker, multi-stage builds, Compose, artifact/version pipelines, dependency scanning, SBOM generation  
@@ -59,7 +59,7 @@ Hi there 👋, I’m Darragh O’Reilly — a Computer Science graduate from Dub
 
 ---
 
-### 📊 GitHub Stats
+### GitHub Stats
 
 <table>
   <thead>
