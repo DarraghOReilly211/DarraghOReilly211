@@ -11,15 +11,16 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ---
 
-## 🛠️ My Latest commit (auto-updated)
+## 🛠️ What I've been working on (auto-updated)
 
+### 🔄 My latest commit 🔄
 <!--START_SECTION:working_on-->
 **DarraghOReilly211/DarraghOReilly211** — latest commit: a2cd393 — _Update README.md_  
 Pushed: 2025-08-28 21:00:50.000 UTC  
 Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 <!--END_SECTION:working_on-->
 
-## ⭐ Project of the hour (auto-updated) ⭐
+### 📌 Project of the hour 📌
 
 <!--START_SECTION:project_spotlight-->
 **DarraghOReilly211**  
