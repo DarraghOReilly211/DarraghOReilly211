@@ -14,8 +14,8 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 ## 🛠️ What I’m working on (auto-updated)
 
 <!--START_SECTION:working_on-->
-**DarraghOReilly211/DarraghOReilly211** — latest commit: 5570d42 — _Update README.md_  
-Pushed: 2025-08-28 17:47:06.000 UTC  
+**DarraghOReilly211/DarraghOReilly211** — latest commit: b8a2452 — _Update update-working-on.yml_  
+Pushed: 2025-08-28 17:47:54.000 UTC  
 Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 <!--END_SECTION:working_on-->
 
@@ -24,7 +24,9 @@ Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 ## 📂 Featured Project (auto-updated)
 
 <!--START_SECTION:project_spotlight-->
-_The latest project you’ve pushed to will appear here, with its name, description, and repo link._
+**DarraghOReilly211**  
+No description yet.  
+🔗 Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 <!--END_SECTION:project_spotlight-->
 
 ---
@@ -32,9 +34,9 @@ _The latest project you’ve pushed to will appear here, with its name, descript
 ## 📈 Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-**Commits today (UTC):** 22
-**Commits this week (UTC):** 51
-**Pushes this week (public events):** 17
+- **Commits today (UTC):** 24
+- **Commits this week (UTC):** 53
+- **Pushes this week (public events):** 17
 <!--END_SECTION:activity_metrics-->
 
 ---
