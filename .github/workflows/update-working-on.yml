@@ -9,6 +9,9 @@ on:
     branches:
       - main
       - master
+    # Prevent commit loops from README-only updates
+    paths-ignore:
+      - 'README.md'
   # And allow manual runs from the Actions tab
   workflow_dispatch:
 
@@ -22,11 +25,14 @@ concurrency:
 
 jobs:
   update:
+    # Extra safety: don't run when the action's own bot is the pusher
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: Update README with latest activity
+        id: update_readme
         uses: actions/github-script@v7
         with:
           script: |
@@ -141,7 +147,10 @@ jobs:
             const startC = '<!--START_SECTION:project_spotlight-->';
             const endC   = '<!--END_SECTION:project_spotlight-->';
 
-            let readme = fs.readFileSync(path, 'utf8');
+            // Read current file and keep an untouched copy for comparison
+            const original = fs.readFileSync(path, 'utf8');
+
+            let readme = original;
 
             if (!readme.includes(startA) || !readme.includes(endA)) {
               core.setFailed('README markers for working_on not found.');
@@ -176,10 +185,34 @@ jobs:
               core.info('Project spotlight markers not found; skipping spotlight update.');
             }
 
-            fs.writeFileSync(path, readme);
+            // Normalize for stable diff (trim trailing whitespace and ensure single trailing newline)
+            const normalize = (s) => s.replace(/\s+$/, '') + '\n';
+            const current = normalize(original);
+            const candidate = normalize(readme);
+
+            if (current === candidate) {
+              core.info('README unchanged — skipping write.');
+              core.setOutput('changed', 'false');
+              return;
+            }
+
+            fs.writeFileSync(path, candidate);
+            core.setOutput('changed', 'true');
             core.info('README updated.');
 
+      - name: Detect README diffs
+        id: diffcheck
+        run: |
+          if git diff --quiet -- README.md; then
+            echo "NO_CHANGES=true" >> $GITHUB_ENV
+            echo "No changes detected by git diff."
+          else
+            echo "NO_CHANGES=false" >> $GITHUB_ENV
+            echo "Changes detected."
+          fi
+
       - name: Commit changes
+        if: env.NO_CHANGES != 'true' && steps.update_readme.outputs.changed == 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Update README with latest project activity"
