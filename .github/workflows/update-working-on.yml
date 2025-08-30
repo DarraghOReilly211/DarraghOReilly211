@@ -3,7 +3,7 @@ name: Update "What I'm working on"
 on:
   # Run every 5 minutes
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "0 * * * *"
   # Also run whenever you push to the profile repo
   push:
     branches:
