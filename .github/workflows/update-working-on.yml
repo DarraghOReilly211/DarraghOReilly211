@@ -1,28 +1,23 @@
 name: Update "What I'm working on"
 
 on:
-  # Run whenever you push to the profile repo
   push:
-    branches:
-      - main
-      - master
-    # Prevent commit loops from README-only updates
+    branches: [ main, master ]
+    # Avoid re-triggering on the bot’s README-only commit
     paths-ignore:
       - 'README.md'
-  # Allow manual runs from the Actions tab
   workflow_dispatch:
 
 permissions:
   contents: write
 
-# Avoid overlapping edits
 concurrency:
   group: update-working-on
   cancel-in-progress: false
 
 jobs:
   update:
-    # Skip only when the event is a push AND the pusher is the bot
+    # Do not run if the event is a push *and* the pusher is the bot
     if: ${{ !(github.event_name == 'push' && github.actor == 'github-actions[bot]') }}
     runs-on: ubuntu-latest
     steps:
@@ -36,7 +31,6 @@ jobs:
             const fs = require('fs');
             const owner = context.repo.owner;
 
-            // Helper: fetch recent public events (up to ~300) for "pushes this week"
             async function fetchRecentPublicEvents(username, pages = 10) {
               const events = [];
               for (let page = 1; page <= pages; page++) {
@@ -82,13 +76,9 @@ jobs:
 
             // 3) Activity metrics via GraphQL (commit contributions)
             const now = new Date();
-            const startTodayUTC = new Date(Date.UTC(
-              now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0
-            ));
-            const endTodayUTC = new Date(Date.UTC(
-              now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0
-            ));
-            const weekAgoUTC = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const startTodayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
+            const endTodayUTC   = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
+            const weekAgoUTC    = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
             const gql = `
               query($login: String!, $fromToday: DateTime!, $toToday: DateTime!, $fromWeek: DateTime!, $toWeek: DateTime!) {
@@ -114,7 +104,7 @@ jobs:
             const commitsToday = gqlRes?.user?.today?.totalCommitContributions ?? 0;
             const commitsThisWeek = gqlRes?.user?.week?.totalCommitContributions ?? 0;
 
-            // 4) Optional: Pushes this week (public PushEvents only) for comparison
+            // 4) Optional: public PushEvents in the last week
             const events = await fetchRecentPublicEvents(owner, 10);
             let pushesThisWeek = 0;
             for (const ev of events) {
@@ -123,11 +113,10 @@ jobs:
               if (ts >= weekAgoUTC) pushesThisWeek += 1;
             }
 
-            // 5) Build a "Featured Project" block from the most recent repo
+            // 5) "Featured Project" block from most recent repo
             const desc = (recent.description && recent.description.trim().length > 0)
               ? recent.description.trim()
               : 'No description yet.';
-            // Escape backticks to avoid breaking Markdown
             const safeDesc = desc.replace(/`/g, '\\`');
             const spotlight = [
               `**${recent.name}**`,
@@ -144,9 +133,7 @@ jobs:
             const startC = '<!--START_SECTION:project_spotlight-->';
             const endC   = '<!--END_SECTION:project_spotlight-->';
 
-            // Read current file and keep an untouched copy for comparison
             const original = fs.readFileSync(path, 'utf8');
-
             let readme = original;
 
             if (!readme.includes(startA) || !readme.includes(endA)) {
@@ -160,8 +147,7 @@ jobs:
 
             // Update "What I'm working on"
             const newWorkingOn = `${startA}\n${repoLine}\n${endA}`;
-            const regexA = new RegExp(`${startA}[\\s\\S]*?${endA}`);
-            readme = readme.replace(regexA, newWorkingOn);
+            readme = readme.replace(new RegExp(`${startA}[\\s\\S]*?${endA}`), newWorkingOn);
 
             // Update Activity metrics
             const metricsBlock = [
@@ -170,19 +156,17 @@ jobs:
               `- **Pushes this week (public events):** ${pushesThisWeek}`
             ].join('\n');
             const newMetrics = `${startB}\n${metricsBlock}\n${endB}`;
-            const regexB = new RegExp(`${startB}[\\s\\S]*?${endB}`);
-            readme = readme.replace(regexB, newMetrics);
+            readme = readme.replace(new RegExp(`${startB}[\\s\\S]*?${endB}`), newMetrics);
 
-            // Update Featured Project if markers exist (skip silently if not)
+            // Update Featured Project if markers exist
             if (readme.includes(startC) && readme.includes(endC)) {
               const newSpotlight = `${startC}\n${spotlight}\n${endC}`;
-              const regexC = new RegExp(`${startC}[\\s\\S]*?${endC}`);
-              readme = readme.replace(regexC, newSpotlight);
+              readme = readme.replace(new RegExp(`${startC}[\\s\\S]*?${endC}`), newSpotlight);
             } else {
               core.info('Project spotlight markers not found; skipping spotlight update.');
             }
 
-            // Normalize for stable diff (trim trailing whitespace and ensure single trailing newline)
+            // Normalize for stable diff
             const normalize = (s) => s.replace(/\s+$/, '') + '\n';
             const current = normalize(original);
             const candidate = normalize(readme);
@@ -193,7 +177,7 @@ jobs:
               return;
             }
 
-            fs.writeFileSync(path, candidate);
+            require('fs').writeFileSync(path, candidate);
             core.setOutput('changed', 'true');
             core.info('README updated.');
 
@@ -201,10 +185,10 @@ jobs:
         id: diffcheck
         run: |
           if git diff --quiet -- README.md; then
-            echo "NO_CHANGES=true" >> $GITHUB_ENV
+            echo "NO_CHANGES=true" >> "$GITHUB_ENV"
             echo "No changes detected by git diff."
           else
-            echo "NO_CHANGES=false" >> $GITHUB_ENV
+            echo "NO_CHANGES=false" >> "$GITHUB_ENV"
             echo "Changes detected."
           fi
 
@@ -213,3 +197,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Update README with latest project activity"
+          file_pattern: README.md
