@@ -3,9 +3,9 @@ name: Update "What I'm working on"
 on:
   push:
     branches: [ main, master ]
-    # Avoid re-triggering on the bot’s README-only commit
-    paths-ignore:
-      - 'README.md'
+  # Also refresh periodically so your profile updates even when you push to other repos
+  schedule:
+    - cron: '*/30 * * * *' # every 30 minutes (UTC)
   workflow_dispatch:
 
 permissions:
