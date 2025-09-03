@@ -1,264 +1,146 @@
 name: Update "What I'm working on"
 
 on:
-  push:
-    branches: [ main, master ]
-  repository_dispatch:
-    types: [profile-update]
-  # Also refresh periodically so your profile updates even when you push to other repos
+  # Run once per hour (UTC)
   schedule:
-    - cron: '*/30 * * * *' # every 30 minutes (UTC)
+    - cron: "0 * * * *"
+  # Run on pushes, but ignore README-only commits (prevents bot-loop)
+  push:
+    branches:
+      - main
+      - master
+    paths-ignore:
+      - 'README.md'
+  # Manual runs
   workflow_dispatch:
 
 permissions:
   contents: write
 
+# Avoid overlapping edits entirely
 concurrency:
   group: update-working-on
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   update:
-    # Do not run if the event is a push *and* the pusher is the bot
+    # Skip runs triggered by the bot’s own push (extra loop guard)
     if: ${{ !(github.event_name == 'push' && github.actor == 'github-actions[bot]') }}
     runs-on: ubuntu-latest
-    env:
-      TZ: Europe/Dublin
     steps:
       - uses: actions/checkout@v4
 
       - name: Update README with latest activity
-        id: update_readme
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
             const owner = context.repo.owner;
 
-            const formatUtc = (d) =>
-              new Date(d).toISOString().replace('T',' ').replace('Z',' UTC');
-
             async function fetchRecentPublicEvents(username, pages = 10) {
               const events = [];
               for (let page = 1; page <= pages; page++) {
-                try {
-                  const { data } = await github.rest.activity.listPublicEventsForUser({
-                    username,
-                    per_page: 30,
-                    page
-                  });
-                  if (!data || data.length === 0) break;
-                  events.push(...data);
-                } catch (e) {
-                  core.warning(`Public events page ${page} fetch failed: ${e.message}`);
-                  break;
-                }
+                const { data } = await github.rest.activity.listPublicEventsForUser({
+                  username, per_page: 30, page
+                });
+                if (!data || data.length === 0) break;
+                events.push(...data);
               }
               return events;
             }
 
-            // Prefer repository_dispatch payload when present (instant updates from other repos)
-            const payload = context.payload?.client_payload || {};
-            let recent, latest, fullName, sha7, firstLine, pushedAtDisplay;
+            // 1) Most recently pushed public repo (skip forks/archived)
+            const { data: repos } = await github.rest.repos.listForUser({
+              username: owner, per_page: 100, sort: 'pushed', direction: 'desc'
+            });
+            const recent = repos.find(r => !r.fork && !r.archived);
+            if (!recent) { core.setFailed("Couldn't find a recent active public repository."); return; }
 
-            if (context.eventName === 'repository_dispatch' && payload.repo && payload.sha) {
-              try {
-                const [o, r] = String(payload.repo).split('/');
-                fullName = payload.repo;
-                sha7 = String(payload.sha).slice(0, 7);
-                firstLine = (payload.message || '').split('\n')[0] || 'no commit message';
-                const pushedIso = payload.pushed_at ? new Date(payload.pushed_at).toISOString() : new Date().toISOString();
-                pushedAtDisplay = formatUtc(pushedIso);
-                recent = { full_name: fullName, name: r, owner: { login: o }, pushed_at: pushedIso };
-                latest = { sha: payload.sha, commit: { message: payload.message || '' } };
-              } catch (e) {
-                core.warning(`Failed to parse repository_dispatch payload: ${e.message}`);
-              }
-            }
+            // 2) Latest commit in that repo
+            const { data: commits } = await github.rest.repos.listCommits({
+              owner: recent.owner.login, repo: recent.name, per_page: 1
+            });
+            const latest = commits[0];
 
-            // Fallback: find most recently pushed public repo (skip forks/archived)
-            if (!recent || !latest) {
-              try {
-                const { data: repos } = await github.rest.repos.listForUser({
-                  username: owner,
-                  per_page: 100,
-                  sort: 'pushed',
-                  direction: 'desc'
-                });
-                recent = repos.find(r => !r.fork && !r.archived);
-                if (!recent) {
-                  core.warning("Couldn't find a recent active public repository.");
-                } else {
-                  const { data: commits } = await github.rest.repos.listCommits({
-                    owner: recent.owner.login,
-                    repo: recent.name,
-                    per_page: 1
-                  });
-                  latest = Array.isArray(commits) && commits[0] ? commits[0] : null;
+            const pushedAt = new Date(recent.pushed_at).toISOString()
+              .replace('T',' ').replace('Z',' UTC');
+            const firstLine = (latest?.commit?.message || '').split('\n')[0] || 'no commit message';
+            const repoLine = `**${recent.full_name}** — latest commit: ${latest?.sha?.slice(0,7) || '???????'} — _${firstLine}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.full_name}`;
 
-                  fullName = recent.full_name;
-                  sha7 = latest?.sha?.slice(0,7) || '???????';
-                  firstLine = (latest?.commit?.message || '').split('\n')[0] || 'no commit message';
-                  pushedAtDisplay = formatUtc(recent.pushed_at);
-                }
-              } catch (e) {
-                core.warning(`Repo/commit discovery failed: ${e.message}`);
-              }
-            }
-
-            if (!recent) {
-              core.warning('No repository information available; skipping README update.');
-              core.setOutput('changed', 'false');
-              return;
-            }
-
-            const repoLine = `**${fullName}** — latest commit: ${sha7} — _${firstLine}_  \nPushed: ${pushedAtDisplay}  \nRepo: https://github.com/${fullName}`;
-
-            // 3) Activity metrics via GraphQL (using local day boundaries, TZ=Europe/Dublin)
-            const now = new Date(); // respects TZ env for local components
-            const startTodayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
-            const endTodayLocal   = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
-            const weekAgoLocal    = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            // 3) Activity metrics via GraphQL (commit contributions)
+            const now = new Date();
+            const startTodayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
+            const endTodayUTC   = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()+1, 0, 0, 0));
+            const weekAgoUTC    = new Date(now.getTime() - 7*24*60*60*1000);
 
             const gql = `
               query($login: String!, $fromToday: DateTime!, $toToday: DateTime!, $fromWeek: DateTime!, $toWeek: DateTime!) {
                 user(login: $login) {
-                  today: contributionsCollection(from: $fromToday, to: $toToday) {
-                    totalCommitContributions
-                  }
-                  week: contributionsCollection(from: $fromWeek, to: $toWeek) {
-                    totalCommitContributions
-                  }
+                  today: contributionsCollection(from: $fromToday, to: $toToday) { totalCommitContributions }
+                  week:  contributionsCollection(from: $fromWeek,  to: $toWeek)  { totalCommitContributions }
                 }
               }
             `;
+            const gqlRes = await github.graphql(gql, {
+              login: owner,
+              fromToday: startTodayUTC.toISOString(),
+              toToday:   endTodayUTC.toISOString(),
+              fromWeek:  weekAgoUTC.toISOString(),
+              toWeek:    now.toISOString()
+            });
+            const commitsToday    = gqlRes?.user?.today?.totalCommitContributions ?? 0;
+            const commitsThisWeek = gqlRes?.user?.week?.totalCommitContributions ?? 0;
 
-            let commitsToday = 0;
-            let commitsThisWeek = 0;
-            try {
-              const gqlRes = await github.graphql(gql, {
-                login: owner,
-                fromToday: startTodayLocal.toISOString(),
-                toToday: endTodayLocal.toISOString(),
-                fromWeek: weekAgoLocal.toISOString(),
-                toWeek: now.toISOString()
-              });
-              commitsToday = gqlRes?.user?.today?.totalCommitContributions ?? 0;
-              commitsThisWeek = gqlRes?.user?.week?.totalCommitContributions ?? 0;
-            } catch (e) {
-              core.warning(`GraphQL metrics fetch failed: ${e.message}`);
-            }
-
-            // 4) Public PushEvents in the last week
+            // 4) Push events in the last week (public)
+            const events = await fetchRecentPublicEvents(owner, 10);
             let pushesThisWeek = 0;
-            try {
-              const events = await fetchRecentPublicEvents(owner, 10);
-              for (const ev of events) {
-                if (ev.type !== 'PushEvent') continue;
-                const ts = new Date(ev.created_at);
-                if (ts >= weekAgoLocal) pushesThisWeek += 1;
-              }
-            } catch (e) {
-              core.warning(`Events processing failed: ${e.message}`);
+            for (const ev of events) {
+              if (ev.type !== 'PushEvent') continue;
+              const ts = new Date(ev.created_at);
+              if (ts >= weekAgoUTC) pushesThisWeek += 1;
             }
 
-            // 5) "Featured Project" block from most recent repo
-            const desc = (recent.description && String(recent.description).trim().length > 0)
-              ? String(recent.description).trim()
-              : 'No description yet.';
+            // 5) Spotlight block
+            const desc = (recent.description && recent.description.trim()) ? recent.description.trim() : 'No description yet.';
             const safeDesc = desc.replace(/`/g, '\\`');
-            const spotlight = [
-              `**${recent.name}**`,
-              `${safeDesc}`,
-              `🔗 Repo: https://github.com/${recent.full_name}`
-            ].join('  \n');
+            const spotlight = [`**${recent.name}**`, `${safeDesc}`, `🔗 Repo: https://github.com/${recent.full_name}`].join('  \n');
 
             // 6) Replace sections in README
-            const path = 'README.md';
-            const startA = '<!--START_SECTION:working_on-->';
-            const endA   = '<!--END_SECTION:working_on-->';
-            const startB = '<!--START_SECTION:activity_metrics-->';
-            const endB   = '<!--END_SECTION:activity_metrics-->';
-            const startC = '<!--START_SECTION:project_spotlight-->';
-            const endC   = '<!--END_SECTION:project_spotlight-->';
+            const path   = 'README.md';
+            const startA = '<!--START_SECTION:working_on-->';      const endA = '<!--END_SECTION:working_on-->';
+            const startB = '<!--START_SECTION:activity_metrics-->'; const endB = '<!--END_SECTION:activity_metrics-->';
+            const startC = '<!--START_SECTION:project_spotlight-->'; const endC = '<!--END_SECTION:project_spotlight-->';
 
-            let original = '';
-            try {
-              original = fs.readFileSync(path, 'utf8');
-            } catch (e) {
-              core.setFailed(`Failed to read ${path}: ${e.message}`);
-              return;
-            }
-            let readme = original;
+            let readme = fs.readFileSync(path, 'utf8');
+            if (!readme.includes(startA) || !readme.includes(endA)) { core.setFailed('README markers for working_on not found.'); return; }
+            if (!readme.includes(startB) || !readme.includes(endB)) { core.setFailed('README markers for activity_metrics not found.'); return; }
 
-            if (!readme.includes(startA) || !readme.includes(endA)) {
-              core.warning('README markers for working_on not found; skipping update.');
-              core.setOutput('changed', 'false');
-              return;
-            }
-            if (!readme.includes(startB) || !readme.includes(endB)) {
-              core.warning('README markers for activity_metrics not found; skipping update.');
-              core.setOutput('changed', 'false');
-              return;
-            }
+            readme = readme.replace(new RegExp(`${startA}[\\s\\S]*?${endA}`), `${startA}\n${repoLine}\n${endA}`);
 
-            // Update "What I'm working on"
-            const newWorkingOn = `${startA}\n${repoLine}\n${endA}`;
-            readme = readme.replace(new RegExp(`${startA}[\\s\\S]*?${endA}`), newWorkingOn);
-
-            // Update Activity metrics (labels reflect local time window)
             const metricsBlock = [
-              `- **Commits today (local):** ${commitsToday}`,
-              `- **Commits this week (local):** ${commitsThisWeek}`,
+              `- **Commits today (UTC):** ${commitsToday}`,
+              `- **Commits this week (UTC):** ${commitsThisWeek}`,
               `- **Pushes this week (public events):** ${pushesThisWeek}`
             ].join('\n');
-            const newMetrics = `${startB}\n${metricsBlock}\n${endB}`;
-            readme = readme.replace(new RegExp(`${startB}[\\s\\S]*?${endB}`), newMetrics);
+            readme = readme.replace(new RegExp(`${startB}[\\s\\S]*?${endB}`), `${startB}\n${metricsBlock}\n${endB}`);
 
-            // Update Featured Project if markers exist
             if (readme.includes(startC) && readme.includes(endC)) {
-              const newSpotlight = `${startC}\n${spotlight}\n${endC}`;
-              readme = readme.replace(new RegExp(`${startC}[\\s\\S]*?${endC}`), newSpotlight);
+              readme = readme.replace(new RegExp(`${startC}[\\s\\S]*?${endC}`), `${startC}\n${spotlight}\n${endC}`);
             } else {
               core.info('Project spotlight markers not found; skipping spotlight update.');
             }
 
-            // Normalize for stable diff
-            const normalize = (s) => s.replace(/\s+$/, '') + '\n';
-            const current = normalize(original);
-            const candidate = normalize(readme);
+            fs.writeFileSync(path, readme);
+            core.info('README updated.');
 
-            if (current === candidate) {
-              core.info('README unchanged — skipping write.');
-              core.setOutput('changed', 'false');
-              return;
-            }
-
-            try {
-              fs.writeFileSync(path, candidate);
-              core.setOutput('changed', 'true');
-              core.info('README updated.');
-            } catch (e) {
-              core.setFailed(`Failed to write ${path}: ${e.message}`);
-            }
-
-      - name: Detect README diffs
-        id: diffcheck
+      - name: Print updated README to logs
         run: |
-          if git diff --quiet -- README.md; then
-            echo "NO_CHANGES=true" >> "$GITHUB_ENV"
-            echo "No changes detected by git diff."
-          else
-            echo "NO_CHANGES=false" >> "$GITHUB_ENV"
-            echo "Changes detected."
-          fi
+          echo "::group::README.md (updated)"
+          cat README.md
+          echo "::endgroup::"
 
       - name: Commit changes
-        if: env.NO_CHANGES != 'true' && steps.update_readme.outputs.changed == 'true'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Update README with latest project activity"
+          commit_message: "chore: Update README with latest project activity"
           file_pattern: README.md
-          commit_user_name: github-actions[bot]
-          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
-          commit_author: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
