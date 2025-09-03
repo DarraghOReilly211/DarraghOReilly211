@@ -16,8 +16,8 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/DarraghOReilly211** — latest commit: 8d51c3e — _chore: Update README with latest project activity_  
-Pushed: 2025-09-03 17:15:07.000 UTC  
+**DarraghOReilly211/DarraghOReilly211** — latest commit: 66c33d5 — _chore: Update README with latest project activity_  
+Pushed: 2025-09-03 18:25:28.000 UTC  
 Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
 <!--END_SECTION:working_on-->
 
@@ -34,8 +34,8 @@ Hi there , I’m Darragh O’Reilly — a Computer Science graduate from Dublin 
 ## Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-- **Commits today (UTC):** 22
-- **Commits this week (UTC):** 245
+- **Commits today (UTC):** 23
+- **Commits this week (UTC):** 246
 - **Pushes this week (public events):** 36
 <!--END_SECTION:activity_metrics-->
 
