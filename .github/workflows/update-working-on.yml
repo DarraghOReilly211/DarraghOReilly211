@@ -1,79 +1,121 @@
 name: Update "What I'm working on"
 
 on:
-  # Run once per hour (UTC)
+  # Hourly (UTC)
   schedule:
-    - cron: "0 * * * *"
-  # Run on pushes, but ignore README-only commits (prevents bot-loop)
+    - cron: "*/5 * * * *"
+  # Manual
+  workflow_dispatch:
+  # Pushes to THIS repo (ignore README-only to avoid loops)
   push:
-    branches:
-      - main
-      - master
+    branches: [ main, master ]
     paths-ignore:
       - 'README.md'
-  # Manual runs
-  workflow_dispatch:
 
 permissions:
   contents: write
 
-# Avoid overlapping edits entirely
 concurrency:
   group: update-working-on
   cancel-in-progress: true
 
 jobs:
   update:
-    # Skip runs triggered by the bot’s own push (extra loop guard)
+    # Guard: skip if the bot itself triggered by committing README
     if: ${{ !(github.event_name == 'push' && github.actor == 'github-actions[bot]') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Update README with latest activity
+      - name: Update README with latest public activity (via profile)
         uses: actions/github-script@v7
         with:
+          # GITHUB_TOKEN is enough for PUBLIC data
           script: |
             const fs = require('fs');
             const owner = context.repo.owner;
+            const profileRepo = `${owner}/${owner}`; // your profile README repo
 
-            async function fetchRecentPublicEvents(username, pages = 10) {
-              const events = [];
-              for (let page = 1; page <= pages; page++) {
-                const { data } = await github.rest.activity.listPublicEventsForUser({
-                  username, per_page: 30, page
-                });
-                if (!data || data.length === 0) break;
-                events.push(...data);
+            // 1) Find the most recently pushed PUBLIC repo you contributed to (skip forks/archived + profile repo)
+            const q = `
+              query($login:String!) {
+                user(login: $login) {
+                  repositoriesContributedTo(
+                    contributionTypes: [COMMIT, PULL_REQUEST, REPOSITORY]
+                    includeUserRepositories: true
+                    first: 50
+                    orderBy: {field: PUSHED_AT, direction: DESC}
+                    privacy: PUBLIC
+                  ) {
+                    nodes {
+                      name
+                      nameWithOwner
+                      isFork
+                      isArchived
+                      pushedAt
+                      description
+                      owner { login }
+                      defaultBranchRef {
+                        name
+                        target {
+                          __typename
+                          ... on Commit {
+                            history(first: 1) {
+                              nodes { oid messageHeadline }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
-              return events;
+            `;
+            const data = await github.graphql(q, { login: owner });
+            const repos = (data.user.repositoriesContributedTo.nodes || [])
+              .filter(r => !r.isFork && !r.isArchived && r.nameWithOwner !== profileRepo);
+
+            if (!repos.length) {
+              core.setFailed("No recent public repositories found after filtering.");
+              return;
             }
 
-            // 1) Most recently pushed public repo (skip forks/archived)
-            const { data: repos } = await github.rest.repos.listForUser({
-              username: owner, per_page: 100, sort: 'pushed', direction: 'desc'
-            });
-            const recent = repos.find(r => !r.fork && !r.archived);
-            if (!recent) { core.setFailed("Couldn't find a recent active public repository."); return; }
+            const recent = repos[0];
 
-            // 2) Latest commit in that repo
-            const { data: commits } = await github.rest.repos.listCommits({
-              owner: recent.owner.login, repo: recent.name, per_page: 1
-            });
-            const latest = commits[0];
+            // 2) Latest commit info (fallback via REST if GraphQL didn't return a commit)
+            let latestSha = '???????';
+            let firstLine = 'no commit message';
+            const t = recent?.defaultBranchRef?.target;
+            if (t?.__typename === 'Commit' && t.history?.nodes?.[0]) {
+              latestSha = t.history.nodes[0].oid.slice(0,7);
+              firstLine = t.history.nodes[0].messageHeadline || firstLine;
+            } else {
+              try {
+                const { data: commits } = await github.rest.repos.listCommits({
+                  owner: recent.owner.login,
+                  repo: recent.name,
+                  per_page: 1
+                });
+                if (commits?.[0]) {
+                  latestSha = commits[0].sha.slice(0,7);
+                  firstLine = (commits[0].commit?.message || '').split('\n')[0] || firstLine;
+                }
+              } catch (e) {
+                core.info(`Commit fallback failed: ${e.message}`);
+              }
+            }
 
-            const pushedAt = new Date(recent.pushed_at).toISOString()
+            const pushedAt = new Date(recent.pushedAt).toISOString()
               .replace('T',' ').replace('Z',' UTC');
-            const firstLine = (latest?.commit?.message || '').split('\n')[0] || 'no commit message';
-            const repoLine = `**${recent.full_name}** — latest commit: ${latest?.sha?.slice(0,7) || '???????'} — _${firstLine}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.full_name}`;
+            const repoLine = `**${recent.nameWithOwner}** — latest commit: ${latestSha} — _${firstLine}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.nameWithOwner}`;
 
-            // 3) Activity metrics via GraphQL (commit contributions)
+            // 3) Activity metrics (UTC)
             const now = new Date();
             const startTodayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
             const endTodayUTC   = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()+1, 0, 0, 0));
             const weekAgoUTC    = new Date(now.getTime() - 7*24*60*60*1000);
 
-            const gql = `
+            const metricsQ = `
               query($login: String!, $fromToday: DateTime!, $toToday: DateTime!, $fromWeek: DateTime!, $toWeek: DateTime!) {
                 user(login: $login) {
                   today: contributionsCollection(from: $fromToday, to: $toToday) { totalCommitContributions }
@@ -81,7 +123,7 @@ jobs:
                 }
               }
             `;
-            const gqlRes = await github.graphql(gql, {
+            const gqlRes = await github.graphql(metricsQ, {
               login: owner,
               fromToday: startTodayUTC.toISOString(),
               toToday:   endTodayUTC.toISOString(),
@@ -91,8 +133,19 @@ jobs:
             const commitsToday    = gqlRes?.user?.today?.totalCommitContributions ?? 0;
             const commitsThisWeek = gqlRes?.user?.week?.totalCommitContributions ?? 0;
 
-            // 4) Push events in the last week (public)
-            const events = await fetchRecentPublicEvents(owner, 10);
+            // 4) Public push events (public-only by design)
+            async function fetchRecentPublicEvents(username, pages = 5) {
+              const events = [];
+              for (let page = 1; page <= pages; page++) {
+                const { data } = await github.rest.activity.listPublicEventsForUser({
+                  username, per_page: 30, page
+                });
+                if (!data?.length) break;
+                events.push(...data);
+              }
+              return events;
+            }
+            const events = await fetchRecentPublicEvents(owner, 5);
             let pushesThisWeek = 0;
             for (const ev of events) {
               if (ev.type !== 'PushEvent') continue;
@@ -100,18 +153,18 @@ jobs:
               if (ts >= weekAgoUTC) pushesThisWeek += 1;
             }
 
-            // 5) Spotlight block
+            // 5) Spotlight (safe backticks)
             const desc = (recent.description && recent.description.trim()) ? recent.description.trim() : 'No description yet.';
             const safeDesc = desc.replace(/`/g, '\\`');
-            const spotlight = [`**${recent.name}**`, `${safeDesc}`, `🔗 Repo: https://github.com/${recent.full_name}`].join('  \n');
+            const spotlight = [`**${recent.nameWithOwner}**`, `${safeDesc}`, `🔗 Repo: https://github.com/${recent.nameWithOwner}`].join('  \n');
 
             // 6) Replace sections in README
             const path   = 'README.md';
             const startA = '<!--START_SECTION:working_on-->';      const endA = '<!--END_SECTION:working_on-->';
             const startB = '<!--START_SECTION:activity_metrics-->'; const endB = '<!--END_SECTION:activity_metrics-->';
             const startC = '<!--START_SECTION:project_spotlight-->'; const endC = '<!--END_SECTION:project_spotlight-->';
-
             let readme = fs.readFileSync(path, 'utf8');
+
             if (!readme.includes(startA) || !readme.includes(endA)) { core.setFailed('README markers for working_on not found.'); return; }
             if (!readme.includes(startB) || !readme.includes(endB)) { core.setFailed('README markers for activity_metrics not found.'); return; }
 
@@ -142,5 +195,5 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: Update README with latest project activity"
+          commit_message: "chore: Update README with latest public activity"
           file_pattern: README.md
