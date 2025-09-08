@@ -16,17 +16,17 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/DarraghOReilly211** — latest commit: d83207e — _chore: Update README with latest project activity_  
-Pushed: 2025-09-08 18:27:18.000 UTC  
-Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
+**DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-** — latest commit: 60527f0 — _Adding base lines for piece movement not a lot of work as I am still recovering. I need to think about how to implement piece movemet in code format. Expect more drawings_  
+Pushed: 2025-09-08 20:17:23.000 UTC  
+Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
 <!--END_SECTION:working_on-->
 
 ### Project of the hour
 
 ><!--START_SECTION:project_spotlight-->
-**DarraghOReilly211**  
-Hi there , I’m Darragh O’Reilly — a Computer Science graduate from Dublin City University with a passion for software development and continuous learning. I focus on building scalable, well-documented solutions and exploring new technologies through hands-on projects. On GitHub you’ll find my current projects, commit activity, and learning roadmap  
-🔗 Repo: https://github.com/DarraghOReilly211/DarraghOReilly211
+**Castled-Java_Chess_AI_Online_Play-**  
+A web-based chess platform with a Java engine that plays at configurable strengths. Phase 1 focuses on a robust single-player experience vs. the AI. Phase 2 adds real-time multiplayer (play and spectate) using WebSockets.  
+🔗 Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
 <!--END_SECTION:project_spotlight-->
 
 ---
@@ -34,8 +34,8 @@ Hi there , I’m Darragh O’Reilly — a Computer Science graduate from Dublin 
 ## Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-- **Commits today (UTC):** 17
-- **Commits this week (UTC):** 138
+- **Commits today (UTC):** 19
+- **Commits this week (UTC):** 140
 - **Pushes this week (public events):** 4
 <!--END_SECTION:activity_metrics-->
 
