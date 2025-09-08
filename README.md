@@ -16,17 +16,17 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/Dublin_City_University_Coding** — latest commit: 5b66b87 — _Initial commit_  
-Pushed: 2025-08-14 23:04:24.000 UTC  
-Repo: https://github.com/DarraghOReilly211/Dublin_City_University_Coding
+**DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-** — latest commit: 902e319 — _Update README.md_  
+Pushed: 2025-09-08 21:25:00.000 UTC  
+Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
 <!--END_SECTION:working_on-->
 
 ### Project of the hour
 
 ><!--START_SECTION:project_spotlight-->
-**DarraghOReilly211/Dublin_City_University_Coding**  
-These are all the different coding assesments and tasks I undertook while I was getting my Bachelors in Computer Science at Dublin City University  
-🔗 Repo: https://github.com/DarraghOReilly211/Dublin_City_University_Coding
+**Castled-Java_Chess_AI_Online_Play-**  
+A web-based chess platform with a Java engine that plays at configurable strengths. Phase 1 focuses on a robust single-player experience vs. the AI. Phase 2 adds real-time multiplayer (play and spectate) using WebSockets.  
+🔗 Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
 <!--END_SECTION:project_spotlight-->
 
 ---
@@ -34,8 +34,8 @@ These are all the different coding assesments and tasks I undertook while I was 
 ## Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-- **Commits today (UTC):** 24
-- **Commits this week (UTC):** 145
+- **Commits today (UTC):** 26
+- **Commits this week (UTC):** 147
 - **Pushes this week (public events):** 4
 <!--END_SECTION:activity_metrics-->
 
