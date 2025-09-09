@@ -16,8 +16,8 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-** — latest commit: 902e319 — _Update README.md_  
-Pushed: 2025-09-08 21:25:00.000 UTC  
+**DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-** — latest commit: bda0d7c — _Corrected colour so it is correct (I have bad spelling), Implementing board so that it can be accessed from anywhere. Next steps confirm piece movement_  
+Pushed: 2025-09-09 20:46:56.000 UTC  
 Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
 <!--END_SECTION:working_on-->
 
@@ -34,8 +34,8 @@ A web-based chess platform with a Java engine that plays at configurable strengt
 ## Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-- **Commits today (UTC):** 81
-- **Commits this week (UTC):** 244
+- **Commits today (UTC):** 83
+- **Commits this week (UTC):** 246
 - **Pushes this week (public events):** 5
 <!--END_SECTION:activity_metrics-->
 
