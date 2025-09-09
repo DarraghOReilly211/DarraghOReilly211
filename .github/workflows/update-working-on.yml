@@ -2,8 +2,8 @@ name: Update "What I'm working on"
 
 on:
   # Every 5 minutes (UTC)
-  schedule:
-    - cron: "*/5 * * * *"
+  # schedule:
+  #   - cron: "*/5 * * * *"
   # Manual runs
   workflow_dispatch:
   # Pushes to THIS repo, but ignore README to avoid bot-loop
