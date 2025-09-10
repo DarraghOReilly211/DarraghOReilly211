@@ -16,17 +16,17 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-** — latest commit: bda0d7c — _Corrected colour so it is correct (I have bad spelling), Implementing board so that it can be accessed from anywhere. Next steps confirm piece movement_  
-Pushed: 2025-09-09 20:46:56.000 UTC  
-Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
+**DarraghOReilly211/Hyprland** — latest commit: 03fe7f3 — _Starting linux customisation repository_  
+Pushed: 2025-09-10 18:29:57.000 UTC  
+Repo: https://github.com/DarraghOReilly211/Hyprland
 <!--END_SECTION:working_on-->
 
 ### Project of the hour
 
 ><!--START_SECTION:project_spotlight-->
-**Castled-Java_Chess_AI_Online_Play-**  
-A web-based chess platform with a Java engine that plays at configurable strengths. Phase 1 focuses on a robust single-player experience vs. the AI. Phase 2 adds real-time multiplayer (play and spectate) using WebSockets.  
-🔗 Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
+**Hyprland**  
+This is a repository for my Arch Linux Hyprland setup so I can more easily replicate it if I move to Arch Linux full time.  
+🔗 Repo: https://github.com/DarraghOReilly211/Hyprland
 <!--END_SECTION:project_spotlight-->
 
 ---
@@ -34,9 +34,9 @@ A web-based chess platform with a Java engine that plays at configurable strengt
 ## Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-- **Commits today (UTC):** 85
-- **Commits this week (UTC):** 248
-- **Pushes this week (public events):** 5
+- **Commits today (UTC):** 3
+- **Commits this week (UTC):** 251
+- **Pushes this week (public events):** 3
 <!--END_SECTION:activity_metrics-->
 
 ---
