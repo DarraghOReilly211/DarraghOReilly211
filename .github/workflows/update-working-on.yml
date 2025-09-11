@@ -3,7 +3,7 @@ name: Update "What I'm working on"
 on:
   # Every 5 minutes (UTC)
   schedule:
-    - cron: "*/5 * * * *"
+  - cron: "0 * * * *"
   # Manual runs
   workflow_dispatch:
   # Pushes to THIS repo, but ignore README to avoid bot-loop
@@ -64,11 +64,34 @@ jobs:
             });
             const latest = commits?.[0];
 
+            const latestSha7 = latest?.sha?.slice(0,7) || '???????';
             const pushedAt = new Date(recent.pushed_at).toISOString().replace('T',' ').replace('Z',' UTC');
             const firstLine = (latest?.commit?.message || '').split('\n')[0] || 'no commit message';
-            const repoLine = `**${recent.full_name}** — latest commit: ${latest?.sha?.slice(0,7) || '???????'} — _${firstLine}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.full_name}`;
+            const repoLine = `**${recent.full_name}** — latest commit: ${latestSha7} — _${firstLine}_  \nPushed: ${pushedAt}  \nRepo: https://github.com/${recent.full_name}`;
 
-            // 3) Activity metrics (UTC)
+            // README markers
+            const path   = 'README.md';
+            const startA = '<!--START_SECTION:working_on-->';      const endA = '<!--END_SECTION:working_on-->';
+            const startB = '<!--START_SECTION:activity_metrics-->'; const endB = '<!--END_SECTION:activity_metrics-->';
+            const startC = '<!--START_SECTION:project_spotlight-->'; const endC = '<!--END_SECTION:project_spotlight-->';
+
+            let readme = fs.readFileSync(path, 'utf8');
+
+            if (!readme.includes(startA) || !readme.includes(endA)) { core.setFailed('README markers for working_on not found.'); return; }
+            if (!readme.includes(startB) || !readme.includes(endB)) { core.setFailed('README markers for activity_metrics not found.'); return; }
+
+            // ---- EARLY EXIT: if README already shows this latest SHA, skip any change ----
+            const workingOnBlock = (readme.match(new RegExp(`${startA}[\\s\\S]*?${endA}`)) || [])[0] || '';
+            const existingShaMatch = workingOnBlock.match(/latest commit:\s+([0-9a-f]{7})/i);
+            const existingSha7 = existingShaMatch?.[1] || null;
+
+            if (existingSha7 && existingSha7 === latestSha7) {
+              core.info(`README already reflects latest commit ${latestSha7}. Skipping update.`);
+              core.setOutput('changed', 'false');
+              return;
+            }
+
+            // 3) Activity metrics (UTC) — only computed when we know we need to refresh
             const now = new Date();
             const startTodayUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
             const endTodayUTC   = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()+1, 0, 0, 0));
@@ -106,17 +129,7 @@ jobs:
             const safeDesc = desc.replace(/`/g, '\\`');
             const spotlight = [`**${recent.name}**`, `${safeDesc}`, `🔗 Repo: https://github.com/${recent.full_name}`].join('  \n');
 
-            // 6) Produce updated README content (but don't write yet)
-            const path   = 'README.md';
-            const startA = '<!--START_SECTION:working_on-->';      const endA = '<!--END_SECTION:working_on-->';
-            const startB = '<!--START_SECTION:activity_metrics-->'; const endB = '<!--END_SECTION:activity_metrics-->';
-            const startC = '<!--START_SECTION:project_spotlight-->'; const endC = '<!--END_SECTION:project_spotlight-->';
-
-            let readme = fs.readFileSync(path, 'utf8');
-
-            if (!readme.includes(startA) || !readme.includes(endA)) { core.setFailed('README markers for working_on not found.'); return; }
-            if (!readme.includes(startB) || !readme.includes(endB)) { core.setFailed('README markers for activity_metrics not found.'); return; }
-
+            // 6) Produce updated README content
             const metricsBlock = [
               `- **Commits today (UTC):** ${commitsToday}`,
               `- **Commits this week (UTC):** ${commitsThisWeek}`,
@@ -132,7 +145,7 @@ jobs:
             // 7) Only write if content actually changed
             if (updatedC !== readme) {
               fs.writeFileSync(path, updatedC);
-              core.info('README changed — will commit.');
+              core.info(`README changed (new latest commit ${latestSha7}) — will commit.`);
               core.setOutput('changed', 'true');
             } else {
               core.info('No changes to README — skipping commit.');
