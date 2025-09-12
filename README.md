@@ -16,17 +16,17 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/ApplicationTracker** — latest commit: 8c1c58e — _Initial commit_  
-Pushed: 2025-09-11 19:19:59.000 UTC  
-Repo: https://github.com/DarraghOReilly211/ApplicationTracker
+**DarraghOReilly211/Hyprland** — latest commit: 03fe7f3 — _Starting linux customisation repository_  
+Pushed: 2025-09-10 18:29:57.000 UTC  
+Repo: https://github.com/DarraghOReilly211/Hyprland
 <!--END_SECTION:working_on-->
 
 ### Project of the hour
 
 ><!--START_SECTION:project_spotlight-->
-**ApplicationTracker**  
-This is a small javaScript application which will connect to a database and keep track of my job applications that I received via email using key words like application to detect new applications and unfortunately to detect closed applications  
-🔗 Repo: https://github.com/DarraghOReilly211/ApplicationTracker
+**Hyprland**  
+This is a repository for my Arch Linux Hyprland setup so I can more easily replicate it if I move to Arch Linux full time.  
+🔗 Repo: https://github.com/DarraghOReilly211/Hyprland
 <!--END_SECTION:project_spotlight-->
 
 ---
@@ -34,8 +34,8 @@ This is a small javaScript application which will connect to a database and keep
 ## Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-- **Commits today (UTC):** 101
-- **Commits this week (UTC):** 363
+- **Commits today (UTC):** 0
+- **Commits this week (UTC):** 341
 - **Pushes this week (public events):** 3
 <!--END_SECTION:activity_metrics-->
 
