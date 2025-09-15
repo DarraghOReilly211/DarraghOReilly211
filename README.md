@@ -16,17 +16,17 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-** — latest commit: 25e0064 — _Changing README.md_  
-Pushed: 2025-09-14 22:03:08.000 UTC  
-Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
+**DarraghOReilly211/ApplicationTracker** — latest commit: 35a21d9 — _Added some more endpoints and functions, as well as a background_  
+Pushed: 2025-09-15 22:42:00.000 UTC  
+Repo: https://github.com/DarraghOReilly211/ApplicationTracker
 <!--END_SECTION:working_on-->
 
 ### Project of the hour
 
 ><!--START_SECTION:project_spotlight-->
-**Castled-Java_Chess_AI_Online_Play-**  
-A web-based chess platform with a Java engine that plays at configurable strengths. Phase 1 focuses on a robust single-player experience vs. the AI. Phase 2 adds real-time multiplayer (play and spectate) using WebSockets.  
-🔗 Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
+**ApplicationTracker**  
+Node.js + Express app that signs into Gmail and turns job-application emails into a clean dashboard. Shows Open vs Closed (detects rejection phrasing), groups by subject, auto-refreshes, thread view with “Open in Gmail,” one-click delete, and a theme switcher with wallpapers.  
+🔗 Repo: https://github.com/DarraghOReilly211/ApplicationTracker
 <!--END_SECTION:project_spotlight-->
 
 ---
@@ -34,9 +34,9 @@ A web-based chess platform with a Java engine that plays at configurable strengt
 ## Activity Today & This Week (auto-updated)
 
 <!--START_SECTION:activity_metrics-->
-- **Commits today (UTC):** 2
-- **Commits this week (UTC):** 298
-- **Pushes this week (public events):** 4
+- **Commits today (UTC):** 1
+- **Commits this week (UTC):** 279
+- **Pushes this week (public events):** 5
 <!--END_SECTION:activity_metrics-->
 
 ---
