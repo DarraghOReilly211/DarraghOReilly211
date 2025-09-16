@@ -16,8 +16,8 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/ApplicationTracker** — latest commit: 35a21d9 — _Added some more endpoints and functions, as well as a background_  
-Pushed: 2025-09-15 22:42:00.000 UTC  
+**DarraghOReilly211/ApplicationTracker** — latest commit: 293c085 — _Added dynamic themes as well as adding additional HackerRank logic_  
+Pushed: 2025-09-16 21:04:27.000 UTC  
 Repo: https://github.com/DarraghOReilly211/ApplicationTracker
 <!--END_SECTION:working_on-->
 
@@ -35,8 +35,8 @@ Node.js + Express app that signs into Gmail and turns job-application emails int
 
 <!--START_SECTION:activity_metrics-->
 - **Commits today (UTC):** 1
-- **Commits this week (UTC):** 279
-- **Pushes this week (public events):** 5
+- **Commits this week (UTC):** 238
+- **Pushes this week (public events):** 3
 <!--END_SECTION:activity_metrics-->
 
 ---
