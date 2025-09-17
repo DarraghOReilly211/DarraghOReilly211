@@ -16,17 +16,17 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/ApplicationTracker** — latest commit: 293c085 — _Added dynamic themes as well as adding additional HackerRank logic_  
-Pushed: 2025-09-16 21:04:27.000 UTC  
-Repo: https://github.com/DarraghOReilly211/ApplicationTracker
+**DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-** — latest commit: 99d32fc — _After some research I have decided to use bitboards as they will help me develope my bit operation skills as well as being more time efficient_  
+Pushed: 2025-09-17 20:35:30.000 UTC  
+Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
 <!--END_SECTION:working_on-->
 
 ### Project of the hour
 
 ><!--START_SECTION:project_spotlight-->
-**ApplicationTracker**  
-Node.js + Express app that signs into Gmail and turns job-application emails into a clean dashboard. Shows Open vs Closed (detects rejection phrasing), groups by subject, auto-refreshes, thread view with “Open in Gmail,” one-click delete, and a theme switcher with wallpapers.  
-🔗 Repo: https://github.com/DarraghOReilly211/ApplicationTracker
+**Castled-Java_Chess_AI_Online_Play-**  
+A web-based chess platform with a Java engine that plays at configurable strengths. Phase 1 focuses on a robust single-player experience vs. the AI. Phase 2 adds real-time multiplayer (play and spectate) using WebSockets.  
+🔗 Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
 <!--END_SECTION:project_spotlight-->
 
 ---
@@ -35,7 +35,7 @@ Node.js + Express app that signs into Gmail and turns job-application emails int
 
 <!--START_SECTION:activity_metrics-->
 - **Commits today (UTC):** 1
-- **Commits this week (UTC):** 238
+- **Commits this week (UTC):** 154
 - **Pushes this week (public events):** 3
 <!--END_SECTION:activity_metrics-->
 
