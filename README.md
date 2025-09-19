@@ -16,8 +16,8 @@ As a **personal preference for my personal projects**, I don’t use ChatGPT. In
 
 ### My latest commit
 ><!--START_SECTION:working_on-->
-**DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-** — latest commit: 99d32fc — _After some research I have decided to use bitboards as they will help me develope my bit operation skills as well as being more time efficient_  
-Pushed: 2025-09-17 20:35:30.000 UTC  
+**DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-** — latest commit: 12636d9 — _Removing JFrame and JLabel as they will no longer be needed_  
+Pushed: 2025-09-19 20:50:31.000 UTC  
 Repo: https://github.com/DarraghOReilly211/Castled-Java_Chess_AI_Online_Play-
 <!--END_SECTION:working_on-->
 
@@ -35,8 +35,8 @@ A web-based chess platform with a Java engine that plays at configurable strengt
 
 <!--START_SECTION:activity_metrics-->
 - **Commits today (UTC):** 1
-- **Commits this week (UTC):** 154
-- **Pushes this week (public events):** 3
+- **Commits this week (UTC):** 12
+- **Pushes this week (public events):** 2
 <!--END_SECTION:activity_metrics-->
 
 ---
